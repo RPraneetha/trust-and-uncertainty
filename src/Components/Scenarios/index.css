@@ -1,0 +1,15 @@
+.scenarioWrapper {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    padding: 10px;
+}
+
+.scenarioCard .card-header{
+    cursor: default;
+}
+
+.scenarioCard .card-text{
+    padding: 10px;
+    cursor: default;
+}
