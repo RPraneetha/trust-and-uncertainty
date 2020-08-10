@@ -1,5 +1,5 @@
 {
-  "name": "trust-and-uncertainty",
+  "name": "trust-and-uncertainty-client",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
