@@ -2,7 +2,7 @@
   "name": "trust-and-uncertainty",
   "version": "1.0.0",
   "scripts": {
-    "start": "node api/bin/www",
+    "start": "cd client && npm start",
     "heroku-postbuild": "cd client && npm install && npm run build"
   }
 }
