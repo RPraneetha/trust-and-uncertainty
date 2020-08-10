@@ -1,9 +1,30 @@
 {
   "name": "trust-and-uncertainty",
-  "version": "1.0.0",
+  "version": "3.0.0",
+  "engines": {
+    "node": "10.x"
+  },
   "scripts": {
-    "start": "cd client && npm start",
-    "build": "cd client && npm run build",
-    "heroku-postbuild": "cd client && npm install && npm run build"
-  }
+    "start": "node server/bin/www",
+    "build": "cd react-ui/ && npm install && npm run build"
+  },
+  "cacheDirectories": [
+    "node_modules",
+    "react-ui/node_modules"
+  ],
+  "dependencies": {
+    "express": "^4.16.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mars/heroku-cra-node.git"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "create-react-app",
+    "react"
+  ],
+  "license": "MIT",
+  "devDependencies": {}
 }
