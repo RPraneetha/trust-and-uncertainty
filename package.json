@@ -5,7 +5,7 @@
     "node": "10.x"
   },
   "scripts": {
-    "start": "cd api && npm install && node api/bin/www",
+    "start": "cd api && npm install && node bin/www",
     "build": "cd client/ && npm install && npm run build"
   },
   "cacheDirectories": [
