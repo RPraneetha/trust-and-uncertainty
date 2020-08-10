@@ -5,12 +5,12 @@
     "node": "10.x"
   },
   "scripts": {
-    "start": "node server/bin/www",
-    "build": "cd react-ui/ && npm install && npm run build"
+    "start": "node api/bin/www",
+    "build": "cd client/ && npm install && npm run build"
   },
   "cacheDirectories": [
     "node_modules",
-    "react-ui/node_modules"
+    "client/node_modules"
   ],
   "dependencies": {
     "express": "^4.16.4"
