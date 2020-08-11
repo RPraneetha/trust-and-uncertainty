@@ -6,7 +6,8 @@
   },
   "scripts": {
     "start": "cd api && npm install && node bin/www",
-    "build": "cd client/ && npm install && npm run build"
+    "build": "cd client/ && npm install && npm run build",
+    "start:client": "cd client/ && npm start"
   },
   "cacheDirectories": [
     "node_modules",

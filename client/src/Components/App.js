@@ -1,4 +1,5 @@
 import React from 'react';
+import log4javascript from 'log4javascript';
 import SearchPage from "./SearchPage";
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -17,13 +18,29 @@ class App extends React.Component {
         let logs = this.state.logs;
         logs.push(new Date() + ": Session started by WorkerId: " +this.context)
         this.setState({logs: logs})
+
+        //window.myLogger = log4javascript.getDefaultLogger();
+        window.myLogger = log4javascript.getLogger();
+        const ajaxAppender = new log4javascript.AjaxAppender('/storeLogs');
+        ajaxAppender.setBatchSize(10); // send in batches of 10
+        ajaxAppender.setSendAllOnUnload(true); // send all remaining messages on window.beforeunload()
+        window.myLogger.addAppender(ajaxAppender);
+
+        //report all user console errors
+        window.onerror = function(message, url, lineNumber) {
+            const errorMsg = "Console error- " + url + " : " + lineNumber + ": " + message;
+            window.myLogger.error(errorMsg);
+            return true;
+        };
+
+        window.myLogger.info(new Date() + ": Session started by WorkerId: " +this.context);
     }
 
     setLogs = newLogs => {
-        console.log(newLogs)
+        // console.log(newLogs)
         let logs = this.state.logs;
         this.setState({logs: logs.concat(newLogs)})
-        console.log(this.state.logs)
+        // console.log(this.state.logs)
     }
 
     render() {
