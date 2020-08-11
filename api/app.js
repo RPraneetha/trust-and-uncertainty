@@ -17,14 +17,14 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '/public')));
+app.use(express.static(path.join(__dirname, '../client/build')));
 
 app.use('/', indexRouter);
 app.use('/storeLogs', storeLogsRouter);
 
 if (process.env.NODE_ENV && process.env.NODE_ENV !== 'development') {
   app.get('*', (req, res) => {
-    res.sendFile('build/index.html', { root: __dirname })
+    res.sendFile('../client/build/index.html', { root: __dirname })
   })
 }
 
