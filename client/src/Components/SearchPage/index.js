@@ -118,14 +118,22 @@ class SearchPage extends React.Component {
                                         <Button onClick={this.handleSubmit}>
                                             Ask the System for Help!
                                         </Button>
+                                        {
+                                            this.state.dss &&
+                                            <span className="recommendation">
+                                                <h5>The Intelligent System searched the database for your requirements,
+                                                    and came up with this recommendation!</h5>
+                                            </span>
+                                        }
                                     </div>
                                     <div className="row">
                                         {
                                             this.state.dss ? (
-                                                <div className="col-xs-12 single-house">
-                                                    <SingleHouse house={this.state.scenarioData.correctHouse} logs={this.state.logs}
-                                                                 setLogs={this.setIntermediateLogs}/>
-                                                </div>
+                                                    <div className="col-xs-12 col-sm-12 col-md-4 col-lg-4 single-house">
+                                                        <SingleHouse house={this.state.scenarioData.correctHouse}
+                                                                     logs={this.state.logs}
+                                                                     setLogs={this.setIntermediateLogs}/>
+                                                    </div>
                                                 )
                                                 :
                                                 this.state.houseData.map((house) => {
