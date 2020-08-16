@@ -21,7 +21,7 @@ class App extends React.Component {
 
         //window.myLogger = log4javascript.getDefaultLogger();
         window.myLogger = log4javascript.getLogger();
-        const ajaxAppender = new log4javascript.AjaxAppender('/storeLogs');
+        const ajaxAppender = new log4javascript.AjaxAppender("/storeLogs");
         ajaxAppender.setBatchSize(10); // send in batches of 10
         ajaxAppender.setSendAllOnUnload(true); // send all remaining messages on window.beforeunload()
         window.myLogger.addAppender(ajaxAppender);
@@ -33,7 +33,7 @@ class App extends React.Component {
             return true;
         };
 
-        window.myLogger.info(new Date() + ": Session started by WorkerId: " +this.context);
+        window.myLogger.info(new Date() + ": Session started by WorkerId: " + this.context);
     }
 
     setLogs = newLogs => {

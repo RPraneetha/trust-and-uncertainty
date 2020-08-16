@@ -3,8 +3,6 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
-const mongoose = require('mongoose');
-const Logs = require('./logsSchema');
 
 const indexRouter = require('./routes/index');
 const storeLogsRouter = require('./routes/storeLogs');
@@ -21,12 +19,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '/build')));
 
-const mongoDBUri = "mongodb+srv://ramya:ramya@cluster0.tekcf.mongodb.net/logs-trust-and-uncertainty?retryWrites=true&w=majority";
-mongoose.connect(mongoDBUri, { useNewUrlParser: true });
-
-const db = mongoose.connection;
-db.once('open', () => console.log('connected to the database'));
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 app.use('/', indexRouter);
 app.use('/storeLogs', storeLogsRouter);

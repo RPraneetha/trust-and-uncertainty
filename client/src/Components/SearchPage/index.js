@@ -4,7 +4,7 @@ import './index.css';
 import WorkerIdContext from "../WorkerIdContext";
 import Loader from "../Loader";
 import SingleHouse from "../SingleHouse";
-import {Button} from "react-bootstrap";
+import { Button } from "react-bootstrap";
 
 class SearchPage extends React.Component {
     constructor(props) {
