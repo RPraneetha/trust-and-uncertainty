@@ -49,9 +49,14 @@
   }
 }
 
+.resultTable {
+  flex-grow: 1;
+}
+
 .row {
   justify-content: center;
   text-align: center;
+  margin: 15px !important;
 }
 
 .nohouses {
@@ -65,11 +70,24 @@
   color: #999;
 }
 
-.single-house {
-  flex: 0 0 max-content !important;
-  max-width: max-content !important;
-}
-
 .recommendation {
   margin-bottom: 5px;
+}
+
+.proceed-wrapper {
+  display: block;
+}
+
+.proceed {
+  float: right;
+  top: 50%;
+  right: 50%;
+}
+
+.row > div {
+  justify-content: center;
+}
+
+.row hr {
+  width: 100%;
 }

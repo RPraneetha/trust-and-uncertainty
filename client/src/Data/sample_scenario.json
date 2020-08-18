@@ -1,0 +1,26 @@
+{
+  "constraints": {
+    "duration": {
+      "value": 12,
+      "unit": "mo"
+    },
+    "nearSupermarkets": true,
+    "municipalityRegistration": true,
+    "typeOfAccomodation": "Studio",
+    "commuteTime": 10,
+    "maxRent": -1
+  },
+  "_id": "5f2ac16a6281ec081b8ff3b4",
+  "id": 1,
+  "description": "Alice is looking for a place to stay in Delft for at least 1 year. She is an international student and requires registration in the municipality. She has no budget constraints as long as the commute time is less than 10 minutes by bike. Further, she prefers a place near the city centre and supermarkets. She also prefers a studio compared to sharing.",
+  "scenarioName": "Alice",
+  "correctHouse": {
+    "_id": "5f2ace7b479ac815b78dbd6a",
+    "name": "Barbarasteeg 2C2",
+    "description": "fully furnished studio",
+    "summary": "Rent:EUR 425 \\n Registration Possible \\n Min contract: 1 year \\n Distance to TU: 8 min by bike \\n Near Delft sation and Supermarkets \\n Studio",
+    "url": "https://www.xior.nl/cache/building/443/thumb/0_400_8-.jpg",
+    "__v": 0
+  },
+  "__v": 0
+}
