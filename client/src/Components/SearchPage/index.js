@@ -124,10 +124,11 @@ class SearchPage extends React.Component {
                                         </Button>
                                         {
                                             this.state.dss &&
-                                            <span className="recommendation">
+                                            <div className="recommendation">
                                                 <h5>The Intelligent System searched the database for your requirements,
                                                     and came up with this recommendation!</h5>
-                                            </span>
+                                                <span>Scroll to the bottom of the screen to proceed.</span>
+                                            </div>
                                         }
                                     </div>
                                     <div className="row">

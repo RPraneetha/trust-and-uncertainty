@@ -74,6 +74,10 @@
   margin-bottom: 5px;
 }
 
+.recommendation > span {
+  color: #999;
+}
+
 .proceed-wrapper {
   display: block;
 }
