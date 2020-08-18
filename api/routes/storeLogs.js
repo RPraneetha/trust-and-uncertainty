@@ -34,8 +34,15 @@ if (process.env.NODE_ENV !== 'production') {
 
 logger.info('Log Server started');
 
-router.post('/', function( req ) {
-    logger.info( req.body.level.toLowerCase() + ": " + req.body.message);
+router.post('/', function( req, res ) {
+    try {
+        logger.info( req.body.level.toLowerCase() + ": " + req.body.message);
+    }
+    catch(error) {
+        logger.error("Error :" + error);
+        res.sendStatus(500);
+    }
+    res.sendStatus(200)
 });
 
 module.exports = router;
