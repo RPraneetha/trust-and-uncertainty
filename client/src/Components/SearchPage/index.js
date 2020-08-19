@@ -21,7 +21,7 @@ class SearchPage extends React.Component {
             loading: true,
             // scenarioType: Math.random() >= 0.5,
             dss: false,
-            house: {}
+            housingOption: {}
         }
     }
 
@@ -81,19 +81,29 @@ class SearchPage extends React.Component {
         this.setState({dss: !this.state.dss, filters: this.filters, isSubmitted: true})
         if(this.state.dss) {
             logger.info(new Date() + ": DSS option selected by WorkerId: " + this.context.workerId);
-            console.log("fsdf")
             if (this.context.scenarioType) {
-                this.setState({house: this.state.scenarioData.correctHouse})
+                this.setState({housingOption: this.state.scenarioData.correctHouse})
                 logger.info(new Date() + ": Correct house given to WorkerId: " + this.context.workerId);
             } else {
                 const incorrectHouseList = this.state.houseData.filter(house => house["_id"] !== this.state.correctHouse)
                 const incorrectHouseNumber = Math.floor(Math.random() * incorrectHouseList.length);
-                this.setState({house: incorrectHouseList[incorrectHouseNumber]});
+                this.setState({housingOption: incorrectHouseList[incorrectHouseNumber]});
                 logger.info(new Date() + ": Incorrect house given to WorkerId: " + this.context.workerId);
             }
         }
         else {
             logger.info(new Date() + ": DSS option unselected by WorkerId: " + this.context.workerId);
+        }
+    }
+
+    handleHouseSubmit = (e, logger, housingOption) => {
+        logger.info(new Date() + ": House " + housingOption.description + " with House Id " +
+            housingOption.house["_id"]  + " submitted by WorkerId: " + this.context.workerId);
+        if(housingOption.house["_id"] === this.state.correctHouse["_id"]) {
+            logger.info(new Date() + ": Correct house submitted by WorkerId: " + this.context.workerId);
+        }
+        else {
+            logger.info(new Date() + ": Incorrect house submitted by WorkerId: " + this.context.workerId);
         }
     }
 
@@ -135,11 +145,16 @@ class SearchPage extends React.Component {
                                             this.state.dss ? (
                                                 <React.Fragment>
                                                     <div className="col-xs-12 col-sm-12 col-md-4 col-lg-4 single-house">
-                                                        <SingleHouse house={this.state.scenarioData.correctHouse} />
+                                                        <SingleHouse house={this.state.housingOption} houseSubmission={this.handleHouseSubmit}/>
                                                     </div>
                                                     <hr />
                                                     <div className={"proceed-wrapper"}>
-                                                        <Button type={"submit"} size="lg" className="proceed">
+                                                        <Button
+                                                            type={"submit"}
+                                                            size="lg"
+                                                            className="proceed"
+                                                            onClick={(e) => this.handleHouseSubmit(e, this.props.logger, this.state.housingOption)}
+                                                        >
                                                             Proceed <FaArrowRight className={"FaArrowRight"}/>
                                                         </Button>
                                                     </div>
@@ -149,7 +164,7 @@ class SearchPage extends React.Component {
                                                 this.state.houseData.map((house) => {
                                                 return (
                                                     <div className="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-                                                        <SingleHouse house={house} />
+                                                        <SingleHouse house={house} houseSubmission={this.handleHouseSubmit}/>
                                                     </div>
                                                 )
                                             })
