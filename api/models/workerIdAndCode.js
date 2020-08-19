@@ -5,6 +5,9 @@ const WorkerIdAndCode = new Schema(
     {
         workerId: String,
         code: String
+    },
+    {
+        timestamps: true
     }
 );
 
