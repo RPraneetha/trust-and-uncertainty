@@ -27,7 +27,7 @@ class App extends React.Component {
             return true;
         };
 
-        window.myLogger.info(new Date() + ": Session started by WorkerId: " + this.context);
+        window.myLogger.info(new Date() + ": Session started by WorkerId: " + this.context.workerId);
         this.setState({ logger: window.myLogger, loggerUpdated: true })
     }
 

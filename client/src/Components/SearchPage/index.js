@@ -2,12 +2,12 @@ import * as React from 'react';
 import { Button } from "react-bootstrap";
 import { FaArrowRight } from "react-icons/fa";
 import Scenarios from "../Scenarios";
-import './index.css';
 import WorkerIdContext from "../WorkerIdContext";
 import Loader from "../Loader";
 import SingleHouse from "../SingleHouse";
 import sampleHouseData from "../../Data/sample_houses.json";
 import sampleScenarioData from "../../Data/sample_scenario.json";
+import './index.css';
 
 class SearchPage extends React.Component {
     constructor(props) {
@@ -19,7 +19,7 @@ class SearchPage extends React.Component {
             correctHouse: null,
             houseData: null,
             loading: true,
-            scenarioType: Math.random() >= 0.5,
+            // scenarioType: Math.random() >= 0.5,
             dss: false,
             house: {}
         }
@@ -32,13 +32,13 @@ class SearchPage extends React.Component {
                 loading: false
             });
         });
-        logger.info(new Date() + ": Search Page started by WorkerId: " + this.context);
+        logger.info(new Date() + ": Search Page started by WorkerId: " + this.context.workerId);
     }
 
     async getScenario(logger) {
-        const sid = Math.floor(Math.random() * 3) + 1;
+        // const sid = Math.floor(Math.random() * 3) + 1;
         const PROXY_URL = `https://cors-anywhere.herokuapp.com/`;
-        const URL = PROXY_URL + `https://cryptic-headland-35693.herokuapp.com/getScenarioAndHouse?sid=${sid}`;
+        const URL = PROXY_URL + `https://cryptic-headland-35693.herokuapp.com/getScenarioAndHouse?sid=${this.context.scenarioId}`;
         let response;
         try {
             response = await fetch(URL, {method: "GET",
@@ -56,7 +56,7 @@ class SearchPage extends React.Component {
             scenario: response.description,
             correctHouse: response.correctHouse["_id"]
         });
-        logger.info(new Date() + ": Scenario id #" + sid + " given to WorkerId: " + this.context);
+        logger.info(new Date() + ": Scenario id #" + this.context.scenarioId + " given to WorkerId: " + this.context.workerId);
     }
 
     async getAllHouses(logger) {
@@ -78,23 +78,22 @@ class SearchPage extends React.Component {
     }
 
     handleSubmit = (e, logger) => {
-        this.setState({dss: !this.state.dss})
-        this.setState({filters: this.filters, isSubmitted: true})
+        this.setState({dss: !this.state.dss, filters: this.filters, isSubmitted: true})
         if(this.state.dss) {
-            logger.info(new Date() + ": DSS option selected by WorkerId: " + this.context);
-
-            if (this.state.scenarioType) {
+            logger.info(new Date() + ": DSS option selected by WorkerId: " + this.context.workerId);
+            console.log("fsdf")
+            if (this.context.scenarioType) {
                 this.setState({house: this.state.scenarioData.correctHouse})
-                logger.info(new Date() + ": Correct house given to WorkerId: " + this.context);
+                logger.info(new Date() + ": Correct house given to WorkerId: " + this.context.workerId);
             } else {
                 const incorrectHouseList = this.state.houseData.filter(house => house["_id"] !== this.state.correctHouse)
                 const incorrectHouseNumber = Math.floor(Math.random() * incorrectHouseList.length);
                 this.setState({house: incorrectHouseList[incorrectHouseNumber]});
-                logger.info(new Date() + ": Incorrect house given to WorkerId: " + this.context);
+                logger.info(new Date() + ": Incorrect house given to WorkerId: " + this.context.workerId);
             }
         }
         else {
-            logger.info(new Date() + ": DSS option unselected by WorkerId: " + this.context);
+            logger.info(new Date() + ": DSS option unselected by WorkerId: " + this.context.workerId);
         }
     }
 

@@ -15,19 +15,19 @@ class SingleHouse extends React.Component {
 
     handleClose = () => {
         window.myLogger.info(new Date() + ": House " + this.props.house.description + " with House Id " +
-            this.props.house["_id"]  + " closed by WorkerId: " + this.context);
+            this.props.house["_id"]  + " closed by WorkerId: " + this.context.workerId);
         this.setState({ showModal: false });
     }
 
     handleShow = () => {
         window.myLogger.info(new Date() + ": House " + this.props.house.description + " with House Id " +
-            this.props.house["_id"]  + " clicked by WorkerId: " + this.context);
+            this.props.house["_id"]  + " clicked by WorkerId: " + this.context.workerId);
         this.setState({showModal: true});
     }
 
     handleSubmit = () => {
         window.myLogger.info(new Date() + ": House " + this.props.house.description + " with House Id " +
-            this.props.house["_id"]  + " selected by WorkerId: " + this.context);
+            this.props.house["_id"]  + " selected by WorkerId: " + this.context.workerId);
     }
 
     render() {
