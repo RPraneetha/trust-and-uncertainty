@@ -36,7 +36,13 @@ class App extends React.Component {
             <div className="globalContainer">
                 <div className="dashboard">
                     <div className="bodyWrapper">
-                        { this.state.loggerUpdated && <SearchPage logger={window.myLogger}/> }
+                        { [
+                            1,
+                            2
+                        ].map((scenarioId, index) => {
+                            return (this.state.loggerUpdated && <SearchPage logger={window.myLogger} scenarioId={scenarioId} index={index}/>)
+                        }) }
+
                     </div>
                 </div>
             </div>
