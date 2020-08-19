@@ -27,7 +27,8 @@ class SingleHouse extends React.Component {
 
     handleSubmit = () => {
         window.myLogger.info(new Date() + ": House " + this.props.house.description + " with House Id " +
-            this.props.house["_id"]  + " selected by WorkerId: " + this.context.workerId);
+            this.props.house["_id"]  + " submitted by WorkerId: " + this.context.workerId);
+        this.props.houseSubmission(window.myLogger, this.props.house);
     }
 
     render() {

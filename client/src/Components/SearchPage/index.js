@@ -2,9 +2,10 @@ import * as React from 'react';
 import { Button } from "react-bootstrap";
 import { FaArrowRight } from "react-icons/fa";
 import Scenarios from "../Scenarios";
-import WorkerIdContext from "../WorkerIdContext";
+import ThankYou from "../ThankYou";
 import Loader from "../Loader";
 import SingleHouse from "../SingleHouse";
+import WorkerIdContext from "../WorkerIdContext";
 import sampleHouseData from "../../Data/sample_houses.json";
 import sampleScenarioData from "../../Data/sample_scenario.json";
 import './index.css';
@@ -13,15 +14,14 @@ class SearchPage extends React.Component {
     constructor(props) {
         super(props);
         this.state ={
-            isSubmitted: false,
             scenario: "",
             scenarioData: null,
             correctHouse: null,
             houseData: null,
             loading: true,
-            // scenarioType: Math.random() >= 0.5,
             dss: false,
-            house: {}
+            housingOption: {},
+            submitted: false
         }
     }
 
@@ -36,9 +36,8 @@ class SearchPage extends React.Component {
     }
 
     async getScenario(logger) {
-        // const sid = Math.floor(Math.random() * 3) + 1;
         const PROXY_URL = `https://cors-anywhere.herokuapp.com/`;
-        const URL = PROXY_URL + `https://cryptic-headland-35693.herokuapp.com/getScenarioAndHouse?sid=${this.context.scenarioId}`;
+        const URL = PROXY_URL + `https://cryptic-headland-35693.herokuapp.com/getScenarioAndHouse?sid=${this.props.scenarioId}`;
         let response;
         try {
             response = await fetch(URL, {method: "GET",
@@ -56,7 +55,7 @@ class SearchPage extends React.Component {
             scenario: response.description,
             correctHouse: response.correctHouse["_id"]
         });
-        logger.info(new Date() + ": Scenario id #" + this.context.scenarioId + " given to WorkerId: " + this.context.workerId);
+        logger.info(new Date() + ": Scenario id #" + this.props.scenarioId + " given to WorkerId: " + this.context.workerId);
     }
 
     async getAllHouses(logger) {
@@ -78,27 +77,39 @@ class SearchPage extends React.Component {
     }
 
     handleSubmit = (e, logger) => {
-        this.setState({dss: !this.state.dss, filters: this.filters, isSubmitted: true})
-        if(this.state.dss) {
+        if(!this.state.dss) {
             logger.info(new Date() + ": DSS option selected by WorkerId: " + this.context.workerId);
-            console.log("fsdf")
-            if (this.context.scenarioType) {
-                this.setState({house: this.state.scenarioData.correctHouse})
+            if (this.context.scenarioType === "1") {
+                this.setState({housingOption: this.state.scenarioData.correctHouse})
                 logger.info(new Date() + ": Correct house given to WorkerId: " + this.context.workerId);
             } else {
                 const incorrectHouseList = this.state.houseData.filter(house => house["_id"] !== this.state.correctHouse)
                 const incorrectHouseNumber = Math.floor(Math.random() * incorrectHouseList.length);
-                this.setState({house: incorrectHouseList[incorrectHouseNumber]});
+                this.setState({housingOption: incorrectHouseList[incorrectHouseNumber]});
                 logger.info(new Date() + ": Incorrect house given to WorkerId: " + this.context.workerId);
             }
         }
         else {
             logger.info(new Date() + ": DSS option unselected by WorkerId: " + this.context.workerId);
         }
+        this.setState({dss: !this.state.dss})
+    }
+
+    handleHouseSubmit = (logger, housingOption) => {
+        logger.info(new Date() + ": House " + housingOption.description + " with House Id " +
+            housingOption["_id"]  + " submitted by WorkerId: " + this.context.workerId);
+        if(housingOption["_id"] === this.state.correctHouse["_id"]) {
+            logger.info(new Date() + ": Correct house submitted by WorkerId: " + this.context.workerId);
+        }
+        else {
+            logger.info(new Date() + ": Incorrect house submitted by WorkerId: " + this.context.workerId);
+        }
+        this.setState({ submitted: true })
     }
 
     render() {
         return (
+            !this.state.submitted ? (
             this.state.loading ?
                 <Loader />
                 :
@@ -135,11 +146,16 @@ class SearchPage extends React.Component {
                                             this.state.dss ? (
                                                 <React.Fragment>
                                                     <div className="col-xs-12 col-sm-12 col-md-4 col-lg-4 single-house">
-                                                        <SingleHouse house={this.state.scenarioData.correctHouse} />
+                                                        <SingleHouse house={this.state.housingOption} houseSubmission={this.handleHouseSubmit}/>
                                                     </div>
                                                     <hr />
                                                     <div className={"proceed-wrapper"}>
-                                                        <Button type={"submit"} size="lg" className="proceed">
+                                                        <Button
+                                                            type={"submit"}
+                                                            size="lg"
+                                                            className="proceed"
+                                                            onClick={() => this.handleHouseSubmit(this.props.logger, this.state.housingOption)}
+                                                        >
                                                             Proceed <FaArrowRight className={"FaArrowRight"}/>
                                                         </Button>
                                                     </div>
@@ -149,7 +165,7 @@ class SearchPage extends React.Component {
                                                 this.state.houseData.map((house) => {
                                                 return (
                                                     <div className="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-                                                        <SingleHouse house={house} />
+                                                        <SingleHouse house={house} houseSubmission={this.handleHouseSubmit}/>
                                                     </div>
                                                 )
                                             })
@@ -160,6 +176,9 @@ class SearchPage extends React.Component {
                         </div>
                     </div>
             </div>
+            )
+                :
+                this.props.index === 1 && <ThankYou />
         );
     }
 }
