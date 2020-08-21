@@ -1,13 +1,10 @@
 import React from 'react';
 import log4javascript from 'log4javascript';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
 import SearchPage from "./SearchPage";
 import Loader from "./Loader";
 import WorkerIdContext from "./WorkerIdContext";
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Feedback from "./Feedback";
-import ThankYou from "./ThankYou";
 
 class App extends React.Component {
     constructor(props) {
@@ -45,8 +42,8 @@ class App extends React.Component {
 
     async getScenarioIds() {
         let scenarioId = {
-            "complexScenario": 1,
-            "easyScenario": 4
+            "complexScenario": 2,
+            "easyScenario": 5
         }
         const PROXY_URL = `https://cors-anywhere.herokuapp.com/`;
         const URL = PROXY_URL + `https://cryptic-headland-35693.herokuapp.com/getWorkerScenario?wid=${this.context.workerId}`;
@@ -70,9 +67,6 @@ class App extends React.Component {
             " Simple id #" + this.state.scenarioIds.easyScenario + " given to WorkerId: " + this.context.workerId);
     }
 
-    toggleScenario = () => {
-        this.setState({scenario: this.state.scenarioIds.easyScenario})
-    }
     render() {
         return (
             <div className="globalContainer">
@@ -81,11 +75,7 @@ class App extends React.Component {
                         {this.state.loading ?
                             <Loader/>
                             :
-                            <Router>
-                                <Route exact path="/" render={(props) => <SearchPage {...props} logger={window.myLogger} scenarioId={this.state.scenario} />} />
-                                <Route exact path="/feedback" render={(props) => <Feedback {...props} logger={window.myLogger} scenarioToggle={this.toggleScenario} />} />
-                                <Route exact path="/thankyou" component={ThankYou} />
-                            </Router>
+                            <SearchPage logger={window.myLogger} scenarioIds={this.state.scenarioIds} />
                         }
                     </div>
                 </div>

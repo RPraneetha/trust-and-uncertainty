@@ -1,11 +1,3 @@
-.thankyou-header {
-    display: flex;
-    justify-content: center;
-    height: inherit;
-    align-items: center;
-    flex-direction: column;
-}
-
-.thankyou-header > h1 {
-    color: #0EAAA6;
+.continue {
+    margin: 50px;
 }

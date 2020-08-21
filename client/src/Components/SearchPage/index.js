@@ -5,17 +5,16 @@ import Feedback from "../Feedback";
 import Loader from "../Loader";
 import Scenarios from "../Scenarios";
 import SingleHouse from "../SingleHouse";
-import ThankYou from "../ThankYou";
 import WorkerIdContext from "../WorkerIdContext";
 import sampleHouseData from "../../Data/sample_houses.json";
 import sampleScenarioData from "../../Data/sample_scenario.json";
 import './index.css';
-import Link from "react-router-dom/modules/Link";
 
 class SearchPage extends React.Component {
     constructor(props) {
         super(props);
         this.state ={
+            scenarioId: null,
             scenario: "",
             scenarioData: null,
             correctHouse: null,
@@ -23,23 +22,26 @@ class SearchPage extends React.Component {
             houseData: null,
             loading: true,
             housingOption: {},
-            feedback: null
+            feedback: null,
+            finished: false
         }
     }
 
     componentDidMount() {
         const logger = this.props.logger;
-        Promise.all([ this.getScenario(logger), this.getAllHouses(logger) ]).then(() => {
-            this.setState({
-                loading: false
+        this.setState({ scenarioId: this.props.scenarioIds.complexScenario}, () => {
+            Promise.all([ this.getScenario(logger), this.getAllHouses(logger) ]).then(() => {
+                this.setState({
+                    loading: false
+                });
             });
-        });
+        })
         logger.info(new Date() + ": Search Page started by WorkerId: " + this.context.workerId);
     }
 
     async getScenario(logger) {
         const PROXY_URL = `https://cors-anywhere.herokuapp.com/`;
-        const URL = PROXY_URL + `https://cryptic-headland-35693.herokuapp.com/getScenarioAndHouse?sid=${this.props.scenarioId}`;
+        const URL = PROXY_URL + `https://cryptic-headland-35693.herokuapp.com/getScenarioAndHouse?sid=${this.state.scenarioId}`;
         let response;
         try {
             response = await fetch(URL, {method: "GET",
@@ -57,7 +59,7 @@ class SearchPage extends React.Component {
             scenario: response.description,
             correctHouse: response.correctHouse["_id"]
         });
-        logger.info(new Date() + ": Scenario id #" + this.props.scenarioId + " given to WorkerId: " + this.context.workerId);
+        logger.info(new Date() + ": Scenario id #" + this.state.scenarioId + " given to WorkerId: " + this.context.workerId);
     }
 
     async getAllHouses(logger) {
@@ -118,13 +120,31 @@ class SearchPage extends React.Component {
             logger.info(new Date() + ": Incorrect house submitted by WorkerId: " + this.context.workerId);
             this.setState({ feedback: false });
         }
+        this.setState({ submitted: true })
+    }
+
+    updateScenarioId = () => {
+        this.setState({
+            loading: true,
+            dss: false,
+            finished: true,
+            scenarioId: this.props.scenarioIds.easyScenario,
+            submitted: false,
+        }, () => {
+            Promise.all([this.getScenario(this.props.logger), this.getAllHouses(this.props.logger)]).then(() => {
+                this.setState({
+                    loading: false
+                });
+            })
+        })
     }
 
     render() {
         return (
-                this.state.loading ?
-                    <Loader />
-                    :
+            this.state.loading ?
+                <Loader />
+                :
+                !this.state.submitted ?
                     <div className="contentWrapper">
                         <div className="header">
                             <h1>Find Your Perfect House</h1>
@@ -162,19 +182,14 @@ class SearchPage extends React.Component {
                                                         </div>
                                                         <hr />
                                                         <div className={"proceed-wrapper"}>
-                                                            <Link to={{
-                                                                pathname: "/feedback",
-                                                                feedback: this.state.feedback
-                                                            }}
-                                                                  onClick={() => this.handleHouseSubmit(this.props.logger, this.state.housingOption)}>
                                                                 <Button
                                                                     type={"submit"}
                                                                     size="lg"
                                                                     className="proceed"
+                                                                    onClick={() => this.handleHouseSubmit(this.props.logger, this.state.housingOption)}
                                                                 >
                                                                     Submit this house <FaArrowRight className={"FaArrowRight"}/>
                                                                 </Button>
-                                                            </Link>
                                                         </div>
                                                     </React.Fragment>
                                                     )
@@ -193,6 +208,8 @@ class SearchPage extends React.Component {
                             </div>
                         </div>
                     </div>
+                    :
+                    <Feedback feedback={this.state.feedback} changeScenario={this.updateScenarioId} finished={this.state.finished} />
         );
     }
 }

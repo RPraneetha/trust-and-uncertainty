@@ -2,12 +2,14 @@ import * as React from 'react';
 import shortid from 'shortid';
 import './index.css';
 import WorkerIdContext from "../WorkerIdContext";
+import Loader from "../Loader";
 
 class ThankYou extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            code: null
+            code: null,
+            loading: true
         }
     }
 
@@ -29,10 +31,17 @@ class ThankYou extends React.Component {
                 code: code,
             })
         })
+
+        setTimeout(function() {
+            this.setState({ loading: false })
+        }.bind(this), 1000)
     }
 
     render() {
         return (
+            this.state.loading ?
+                <Loader />
+                :
             <div className="thankyou-header">
                 <h1>Thank You For Completing The Task!</h1>
                 <h2 className={"bonus"}>
