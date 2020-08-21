@@ -42,8 +42,8 @@ class App extends React.Component {
 
     async getScenarioIds() {
         let scenarioId = {
-            "complexScenario": 1,
-            "easyScenario": 4
+            "complexScenario": 2,
+            "easyScenario": 5
         }
         const PROXY_URL = `https://cors-anywhere.herokuapp.com/`;
         const URL = PROXY_URL + `https://cryptic-headland-35693.herokuapp.com/getWorkerScenario?wid=${this.context.workerId}`;
@@ -60,7 +60,8 @@ class App extends React.Component {
         }
         response = response ? response : scenarioId;
         this.setState({
-            scenarioIds: response
+            scenarioIds: response,
+            scenario: response.complexScenario
         });
         this.state.logger.info(new Date() + ": Scenarios: Complex id #" + this.state.scenarioIds.complexScenario +
             " Simple id #" + this.state.scenarioIds.easyScenario + " given to WorkerId: " + this.context.workerId);
@@ -68,24 +69,17 @@ class App extends React.Component {
 
     render() {
         return (
-
-
-                <div className="globalContainer">
-                    <div className="dashboard">
-                        <div className="bodyWrapper">
-                            {this.state.loading ?
-                                <Loader/>
-                                :
-                                ([
-                                    this.state.scenarioIds.complexScenario,
-                                    this.state.scenarioIds.easyScenario
-                                ].map((scenarioId, index) => {
-                                return (this.state.loggerUpdated &&
-                                <SearchPage logger={window.myLogger} scenarioId={scenarioId} index={index}/>)
-                            }))}
-                        </div>
+            <div className="globalContainer">
+                <div className="dashboard">
+                    <div className="bodyWrapper">
+                        {this.state.loading ?
+                            <Loader/>
+                            :
+                            <SearchPage logger={window.myLogger} scenarioIds={this.state.scenarioIds} />
+                        }
                     </div>
                 </div>
+            </div>
         );
     }
 }

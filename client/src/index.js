@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './Components/App';
 import WorkerIdContext from "./Components/WorkerIdContext";
+import * as serviceWorker from './serviceWorker';
 
 function Root() {
     let params = new URLSearchParams(window.location.search);
@@ -20,4 +21,4 @@ function Root() {
 
 ReactDOM.render(<Root />, document.getElementById('root'));
 
-// serviceWorker.unregister();
+serviceWorker.unregister();
