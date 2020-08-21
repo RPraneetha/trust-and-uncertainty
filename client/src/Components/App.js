@@ -1,10 +1,13 @@
 import React from 'react';
 import log4javascript from 'log4javascript';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import SearchPage from "./SearchPage";
 import Loader from "./Loader";
 import WorkerIdContext from "./WorkerIdContext";
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Feedback from "./Feedback";
+import ThankYou from "./ThankYou";
 
 class App extends React.Component {
     constructor(props) {
@@ -60,32 +63,33 @@ class App extends React.Component {
         }
         response = response ? response : scenarioId;
         this.setState({
-            scenarioIds: response
+            scenarioIds: response,
+            scenario: response.complexScenario
         });
         this.state.logger.info(new Date() + ": Scenarios: Complex id #" + this.state.scenarioIds.complexScenario +
             " Simple id #" + this.state.scenarioIds.easyScenario + " given to WorkerId: " + this.context.workerId);
     }
 
+    toggleScenario = () => {
+        this.setState({scenario: this.state.scenarioIds.easyScenario})
+    }
     render() {
         return (
-
-
-                <div className="globalContainer">
-                    <div className="dashboard">
-                        <div className="bodyWrapper">
-                            {this.state.loading ?
-                                <Loader/>
-                                :
-                                ([
-                                    this.state.scenarioIds.complexScenario,
-                                    this.state.scenarioIds.easyScenario
-                                ].map((scenarioId, index) => {
-                                return (this.state.loggerUpdated &&
-                                <SearchPage logger={window.myLogger} scenarioId={scenarioId} index={index}/>)
-                            }))}
-                        </div>
+            <div className="globalContainer">
+                <div className="dashboard">
+                    <div className="bodyWrapper">
+                        {this.state.loading ?
+                            <Loader/>
+                            :
+                            <Router>
+                                <Route exact path="/" render={(props) => <SearchPage {...props} logger={window.myLogger} scenarioId={this.state.scenario} />} />
+                                <Route exact path="/feedback" render={(props) => <Feedback {...props} logger={window.myLogger} scenarioToggle={this.toggleScenario} />} />
+                                <Route exact path="/thankyou" component={ThankYou} />
+                            </Router>
+                        }
                     </div>
                 </div>
+            </div>
         );
     }
 }
