@@ -69,7 +69,7 @@ class SingleHouse extends React.Component {
                             Back
                         </Button>
                         <Button variant="primary" onClick={this.handleSubmit}>
-                            Confirm Your Choice
+                            Submit this house
                         </Button>
                     </Modal.Footer>
                 </Modal>

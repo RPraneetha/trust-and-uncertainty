@@ -18,8 +18,6 @@ class ThankYou extends React.Component {
         this.setState({code: code})
         window.myLogger.info(new Date() + ": Code " + this.state.code +" given to WorkerId: " + this.context.workerId)
 
-        const URL = "https://trust-and-uncertainty.herokuapp.com/workerIdAndCode";
-
         fetch("/workerIdAndCode", {
             method: 'POST',
             headers: {
