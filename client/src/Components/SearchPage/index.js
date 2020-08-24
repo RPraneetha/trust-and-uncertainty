@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button } from "react-bootstrap";
 import { FaArrowRight } from "react-icons/fa";
+import { shuffle } from "lodash";
 import Feedback from "../Feedback";
 import Loader from "../Loader";
 import Scenarios from "../Scenarios";
@@ -72,10 +73,12 @@ class SearchPage extends React.Component {
                     "Access-Control-Allow-Origin": "*"
                 }});
             response = await response.json();
+            response = shuffle(response);
         }
         catch(e) {
             logger.error(new Date() + ": Error " + JSON.stringify(e));
         }
+        console.log(response)
         response = response ? response : sampleHouseData;
         this.setState({houseData: response})
     }
@@ -157,7 +160,7 @@ class SearchPage extends React.Component {
                                 <div className="resultBody">
                                     <div className="resultsList">
                                         <div className="nohouses">
-                                            <h2>Find a house that matches the scenario given and submit it</h2>
+                                            <h2>Find a house that meets the requirements and submit it.</h2>
                                             <span>Click on the house to see additional information</span>
                                         </div>
                                         <div className={"button-dss"}>
