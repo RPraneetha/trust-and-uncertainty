@@ -12,18 +12,15 @@ db.once('open', () => console.log('connected to the database'));
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 router.post('/', function( req, res ) {
-    let workerIdAndCode = new WorkerIdAndCode();
-
-    const { workerId, code } = req.body;
-
-    workerIdAndCode.workerId = workerId;
-    workerIdAndCode.code = code;
-
-    workerIdAndCode.save((err) => {
+    WorkerIdAndCode.updateOne(
+        { workerId : { $exists : false }, code: req.body.code },
+        { workerId: req.body.workerId } ,
+        { upsert: true },
+        function(err) {
         if (err)
             return res.json({ success: false, error: err });
         return res.sendStatus(200);
-    });
+    })
 });
 
 module.exports = router;
