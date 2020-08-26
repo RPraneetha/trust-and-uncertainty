@@ -112,6 +112,8 @@ class SearchPage extends React.Component {
     }
 
     handleHouseSubmit = (logger, housingOption) => {
+        if(!this.state.dss)
+            logger.info(new Date() + ": DSS option submitted by WorkerId: " + this.context.workerId);
         this.delay(1000);
         logger.info(new Date() + ": House " + housingOption.description + " with House Id " +
             housingOption["_id"]  + " submitted by WorkerId: " + this.context.workerId);

@@ -16,7 +16,7 @@ class ThankYou extends React.Component {
     componentDidMount() {
         const code = shortid.generate();
         this.setState({code: code})
-        window.myLogger.info(new Date() + ": Code " + this.state.code +" given to WorkerId: " + this.context.workerId)
+        window.myLogger.info(new Date() + ": Code " + code +" given to WorkerId: " + this.context.workerId)
 
         fetch("/workerIdAndCode", {
             method: 'POST',
