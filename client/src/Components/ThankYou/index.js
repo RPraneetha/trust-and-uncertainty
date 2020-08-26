@@ -1,5 +1,4 @@
 import * as React from 'react';
-import shortid from 'shortid';
 import './index.css';
 import WorkerIdContext from "../WorkerIdContext";
 import Loader from "../Loader";
@@ -14,25 +13,46 @@ class ThankYou extends React.Component {
     }
 
     componentDidMount() {
-        const code = shortid.generate();
-        this.setState({code: code})
-        window.myLogger.info(new Date() + ": Code " + code +" given to WorkerId: " + this.context.workerId)
+        Promise.all([ this.getCode(window.myLogger)]).then((code) => {
+            this.setState({
+                loading: false,
+                code: code
+            });
 
-        fetch("/workerIdAndCode", {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                workerId: this.context.workerId,
-                code: code,
-            })
-        })
+            fetch("/workerIdAndCode", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    workerId: this.context.workerId,
+                    code: this.state.code,
+                })
+            });
+        });
 
         setTimeout(function() {
             this.setState({ loading: false })
         }.bind(this), 1000)
+    }
+
+    async getCode(logger) {
+        let response;
+        try {
+            response = await fetch("/getCode", {method: "GET",
+                headers: {
+                    "Access-Control-Allow-Origin": "*"
+                }});
+            response = await response.json();
+        }
+        catch(e) {
+            logger.error(new Date() + ": Error " + JSON.stringify(e));
+        }
+        response = response ? response.code : "12345678";
+        logger.info(new Date() + ": Code " + response + " given to WorkerId: " + this.context.workerId);
+
+        return response;
     }
 
     render() {

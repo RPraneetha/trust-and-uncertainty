@@ -78,7 +78,6 @@ class SearchPage extends React.Component {
         catch(e) {
             logger.error(new Date() + ": Error " + JSON.stringify(e));
         }
-        console.log(response)
         response = response ? response : sampleHouseData;
         this.setState({houseData: response})
     }
