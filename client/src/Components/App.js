@@ -45,7 +45,7 @@ class App extends React.Component {
             "complexScenario": 2,
             "easyScenario": 5
         }
-        const PROXY_URL = `https://cors-anywhere.herokuapp.com/`;
+        const PROXY_URL = `https://infinite-plateau-04823.herokuapp.com/`;
         const URL = PROXY_URL + `https://cryptic-headland-35693.herokuapp.com/getWorkerScenario?wid=${this.context.workerId}`;
         let response;
         try {

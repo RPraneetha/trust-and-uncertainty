@@ -41,7 +41,7 @@ class SearchPage extends React.Component {
     }
 
     async getScenario(logger) {
-        const PROXY_URL = `https://cors-anywhere.herokuapp.com/`;
+        const PROXY_URL = `https://infinite-plateau-04823.herokuapp.com/`;
         const URL = PROXY_URL + `https://cryptic-headland-35693.herokuapp.com/getScenarioAndHouse?sid=${this.state.scenarioId}`;
         let response;
         try {
@@ -64,7 +64,7 @@ class SearchPage extends React.Component {
     }
 
     async getAllHouses(logger) {
-        const PROXY_URL = "https://cors-anywhere.herokuapp.com/";
+        const PROXY_URL = "https://infinite-plateau-04823.herokuapp.com/";
         const URL = PROXY_URL + "https://cryptic-headland-35693.herokuapp.com/getAllHouses";
         let response;
         try {
