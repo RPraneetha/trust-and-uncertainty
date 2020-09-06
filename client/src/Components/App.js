@@ -2,6 +2,7 @@ import React from 'react';
 import log4javascript from 'log4javascript';
 import SearchPage from "./SearchPage";
 import Loader from "./Loader";
+import ErrorPage from "./ErrorPage";
 import WorkerIdContext from "./WorkerIdContext";
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -13,14 +14,15 @@ class App extends React.Component {
             loading: true,
             logger: null,
             loggerUpdated: false,
-            scenarioIds: {}
+            scenarioIds: {},
+            error: false
         }
     }
 
     componentDidMount() {
         window.myLogger = log4javascript.getLogger();
         const ajaxAppender = new log4javascript.AjaxAppender("/storeLogs");
-        ajaxAppender.setBatchSize(10); // send in batches of 10
+        ajaxAppender.setBatchSize(50); // send in batches of 10
         ajaxAppender.setSendAllOnUnload(true); // send all remaining messages on window.beforeunload()
         window.myLogger.addAppender(ajaxAppender);
 
@@ -53,6 +55,11 @@ class App extends React.Component {
                 headers: {
                     "Access-Control-Allow-Origin": "*"
                 }});
+            if(response.status === 400){
+                this.setState({error: true})
+                this.state.logger.info(new Date() + ": Scenarios could not be given to WorkerId: " + this.context.workerId);
+                return;
+            }
             response = await response.json();
         }
         catch(e) {
@@ -75,7 +82,10 @@ class App extends React.Component {
                         {this.state.loading ?
                             <Loader/>
                             :
-                            <SearchPage logger={window.myLogger} scenarioIds={this.state.scenarioIds} />
+                            this.state.error ?
+                                <ErrorPage />
+                                :
+                                <SearchPage logger={window.myLogger} scenarioIds={this.state.scenarioIds} />
                         }
                     </div>
                 </div>
