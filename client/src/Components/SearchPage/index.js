@@ -31,16 +31,16 @@ class SearchPage extends React.Component {
 
     componentDidMount() {
         const logger = this.props.logger;
+        const scenarioIdArray = shuffle(this.props.scenarioIdArray);
         this.setState({
-            scenarioIdArray: shuffle(this.props.scenarioIdArray)
+            scenarioIdArray: scenarioIdArray,
+            scenarioId: scenarioIdArray[0]
 
         }, () => {
             Promise.all([ this.getScenario(logger), this.getAllHouses(logger) ]).then(() => {
                 this.setState({
-                    scenarioId: this.state.scenarioIdArray[0],
                     loading: false
                 });
-                console.log(this.state.scenarioIdArray)
             });
         })
         logger.info(new Date() + ": Search Page started by WorkerId: " + this.context.workerId);
