@@ -68,7 +68,7 @@ class App extends React.Component {
         response = response ? response : scenarioId;
         this.setState({
             scenarioIds: response,
-            scenario: response.complexScenario
+            scenarioIdArray: [ response.complexScenario, response.easyScenario ]
         });
         this.state.logger.info(new Date() + ": Scenarios: Complex id #" + this.state.scenarioIds.complexScenario +
             " Simple id #" + this.state.scenarioIds.easyScenario + " given to WorkerId: " + this.context.workerId);
@@ -85,7 +85,7 @@ class App extends React.Component {
                             this.state.error ?
                                 <ErrorPage />
                                 :
-                                <SearchPage logger={window.myLogger} scenarioIds={this.state.scenarioIds} />
+                                <SearchPage logger={window.myLogger} scenarioIds={this.state.scenarioIds} scenarioIdArray={this.state.scenarioIdArray} />
                         }
                     </div>
                 </div>

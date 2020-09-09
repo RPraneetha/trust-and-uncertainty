@@ -16,6 +16,7 @@ class SearchPage extends React.Component {
         super(props);
         this.state ={
             scenarioId: null,
+            scenarioIdArray: [],
             scenario: "",
             scenarioData: null,
             correctHouse: null,
@@ -30,11 +31,16 @@ class SearchPage extends React.Component {
 
     componentDidMount() {
         const logger = this.props.logger;
-        this.setState({ scenarioId: this.props.scenarioIds.complexScenario}, () => {
+        this.setState({
+            scenarioIdArray: shuffle(this.props.scenarioIdArray)
+
+        }, () => {
             Promise.all([ this.getScenario(logger), this.getAllHouses(logger) ]).then(() => {
                 this.setState({
+                    scenarioId: this.state.scenarioIdArray[0],
                     loading: false
                 });
+                console.log(this.state.scenarioIdArray)
             });
         })
         logger.info(new Date() + ": Search Page started by WorkerId: " + this.context.workerId);
@@ -132,7 +138,7 @@ class SearchPage extends React.Component {
             loading: true,
             dss: false,
             finished: true,
-            scenarioId: this.props.scenarioIds.easyScenario,
+            scenarioId: this.state.scenarioIdArray[1],
             submitted: false,
         }, () => {
             Promise.all([this.getScenario(this.props.logger), this.getAllHouses(this.props.logger)]).then(() => {
