@@ -25,7 +25,15 @@ class SearchPage extends React.Component {
             loading: true,
             housingOption: {},
             feedback: null,
-            finished: false
+            finished: false,
+            actions: {
+                dss_selected: false,
+                dss_house_details_checked: false,
+                manual_house_details_checked: false,
+                dss_house_submitted: false,
+                manual_house_submitted: false
+
+            }
         }
     }
 
@@ -95,10 +103,27 @@ class SearchPage extends React.Component {
         }.bind(this), time)
     }
 
-    handleSubmit = (e, logger) => {
-        this.delay(1000);
+    setAction = (isDSS) => {
+        if(isDSS) {
+            this.setState({actions: {...this.state.actions, dss_house_details_checked: true}});
+        } else {
+            this.setState({actions: {...this.state.actions, manual_house_details_checked: true}});
+        }
 
+    }
+
+    handleActionLogging = (logger) => {
+        logger.info(new Date() + " Summary of actions by WorkerID: " + this.context.workerId);
+        for (const [key, value] of Object.entries(this.state.actions)) {
+            console.log(`${key}:  ${value}`)
+            logger.info(new Date() + "WorkerID: " + this.context.workerId + `${key}:  ${value}`);
+        }
+        this.setState({ submitted: true })
+    }
+
+    handleDSSSubmit = (e, logger) => {
         if(!this.state.dss) {
+            this.setState({actions: {...this.state.actions, dss_selected: true}});
             logger.info(new Date() + ": DSS option selected by WorkerId: " + this.context.workerId);
             if (this.context.scenarioType === "1") {
                 this.setState({housingOption: this.state.scenarioData.correctHouse})
@@ -109,28 +134,28 @@ class SearchPage extends React.Component {
                 this.setState({housingOption: incorrectHouseList[incorrectHouseNumber]});
                 logger.info(new Date() + ": Incorrect house given to WorkerId: " + this.context.workerId);
             }
-        }
-        else {
+        } else {
             logger.info(new Date() + ": DSS option unselected by WorkerId: " + this.context.workerId);
         }
         this.setState({dss: !this.state.dss})
     }
 
     handleHouseSubmit = (logger, housingOption) => {
-        if(!this.state.dss)
+        if(this.state.dss) {
             logger.info(new Date() + ": DSS option submitted by WorkerId: " + this.context.workerId);
-        this.delay(1000);
-        logger.info(new Date() + ": House " + housingOption.description + " with House Id " +
-            housingOption["_id"]  + " submitted by WorkerId: " + this.context.workerId);
-        if(housingOption["_id"] === this.state.correctHouse) {
-            logger.info(new Date() + ": Correct house submitted by WorkerId: " + this.context.workerId);
-            this.setState({ feedback: true });
+            this.setState({actions: {...this.state.actions, dss_house_submitted: true}}, () => this.handleActionLogging(logger));
+        } else {
+            logger.info(new Date() + ": House Id " + housingOption["_id"]  + " manually submitted by WorkerId: " + this.context.workerId);
+            this.setState({actions: {...this.state.actions, manual_house_submitted: true}}, () => this.handleActionLogging(logger));
+            if(housingOption["_id"] === this.state.correctHouse) {
+                logger.info(new Date() + ": Correct house submitted by WorkerId: " + this.context.workerId);
+                this.setState({ feedback: true });
+            }
+            else {
+                logger.info(new Date() + ": Incorrect house submitted by WorkerId: " + this.context.workerId);
+                this.setState({ feedback: false });
+            }
         }
-        else {
-            logger.info(new Date() + ": Incorrect house submitted by WorkerId: " + this.context.workerId);
-            this.setState({ feedback: false });
-        }
-        this.setState({ submitted: true })
     }
 
     updateScenarioId = () => {
@@ -140,6 +165,14 @@ class SearchPage extends React.Component {
             finished: true,
             scenarioId: this.state.scenarioIdArray[1],
             submitted: false,
+            actions: {
+            dss_selected: false,
+                dss_house_details_checked: false,
+                manual_house_details_checked: false,
+                dss_house_submitted: false,
+                manual_house_submitted: false
+
+        }
         }, () => {
             Promise.all([this.getScenario(this.props.logger), this.getAllHouses(this.props.logger)]).then(() => {
                 this.setState({
@@ -171,7 +204,7 @@ class SearchPage extends React.Component {
                                             <span>Click on the house to see additional information</span>
                                         </div>
                                         <div className={"button-dss"}>
-                                            <Button onClick={(e) => this.handleSubmit(e, this.props.logger)}>
+                                            <Button onClick={(e) => this.handleDSSSubmit(e, this.props.logger)}>
                                                 {this.state.dss ?  "Go Back" : "Ask the System for Help"}
                                             </Button>
                                             {
@@ -186,12 +219,17 @@ class SearchPage extends React.Component {
                                         <div className="row">
                                             {
                                                 this.state.dss ? (
-                                                    <React.Fragment>
-                                                        <div className="col-xs-12 col-sm-12 col-md-4 col-lg-4 single-house">
-                                                            <SingleHouse house={this.state.housingOption} houseSubmission={this.handleHouseSubmit}/>
-                                                        </div>
-                                                        <hr />
-                                                        <div className={"proceed-wrapper"}>
+                                                        <React.Fragment>
+                                                            <div className="col-xs-12 col-sm-12 col-md-4 col-lg-4 single-house">
+                                                                <SingleHouse
+                                                                    house={this.state.housingOption}
+                                                                    houseSubmission={this.handleHouseSubmit}
+                                                                    isDSS={true}
+                                                                    setAction={this.setAction}
+                                                                />
+                                                            </div>
+                                                            <hr />
+                                                            <div className={"proceed-wrapper"}>
                                                                 <Button
                                                                     type={"submit"}
                                                                     size="lg"
@@ -200,14 +238,19 @@ class SearchPage extends React.Component {
                                                                 >
                                                                     Submit this house <FaArrowRight className={"FaArrowRight"}/>
                                                                 </Button>
-                                                        </div>
-                                                    </React.Fragment>
+                                                            </div>
+                                                        </React.Fragment>
                                                     )
                                                     :
                                                     this.state.houseData.map((house) => {
                                                         return (
                                                             <div className="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-                                                                <SingleHouse house={house} houseSubmission={this.handleHouseSubmit}/>
+                                                                <SingleHouse
+                                                                    house={house}
+                                                                    houseSubmission={this.handleHouseSubmit}
+                                                                    isDSS={false}
+                                                                    setAction={this.setAction}
+                                                                />
                                                             </div>
                                                         )
                                                     })

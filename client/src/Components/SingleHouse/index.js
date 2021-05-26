@@ -9,24 +9,23 @@ class SingleHouse extends React.Component {
         this.state = {
             showModal: false
         }
-        this.handleClose = this.handleClose.bind(this);
-        this.handleShow = this.handleShow.bind(this);
     }
 
     handleClose = () => {
-        window.myLogger.info(new Date() + ": House " + this.props.house.description + " with House Id " +
+        window.myLogger.info(new Date() + ": House Id " +
             this.props.house["_id"]  + " closed by WorkerId: " + this.context.workerId);
         this.setState({ showModal: false });
     }
 
     handleShow = () => {
-        window.myLogger.info(new Date() + ": House " + this.props.house.description + " with House Id " +
+        window.myLogger.info(new Date() + ": House Id " +
             this.props.house["_id"]  + " clicked by WorkerId: " + this.context.workerId);
         this.setState({showModal: true});
+        this.props.setAction(this.props.isDSS);
     }
 
     handleSubmit = () => {
-        window.myLogger.info(new Date() + ": House " + this.props.house.description + " with House Id " +
+        window.myLogger.info(new Date() + ": House Id " +
             this.props.house["_id"]  + " submitted by WorkerId: " + this.context.workerId);
         this.props.houseSubmission(window.myLogger, this.props.house);
     }
