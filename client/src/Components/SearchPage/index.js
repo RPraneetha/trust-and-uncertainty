@@ -15,9 +15,8 @@ class SearchPage extends React.Component {
     constructor(props) {
         super(props);
         this.state ={
-            scenarioId: null,
-            scenarioIdArray: [],
             scenario: "",
+            scenarioIndex: 0,
             scenarioData: null,
             correctHouse: null,
             dss: false,
@@ -39,24 +38,17 @@ class SearchPage extends React.Component {
 
     componentDidMount() {
         const logger = this.props.logger;
-        const scenarioIdArray = shuffle(this.props.scenarioIdArray);
-        this.setState({
-            scenarioIdArray: scenarioIdArray,
-            scenarioId: scenarioIdArray[0]
-
-        }, () => {
-            Promise.all([ this.getScenario(logger), this.getAllHouses(logger) ]).then(() => {
-                this.setState({
-                    loading: false
-                });
+        Promise.all([ this.getScenario(logger), this.getAllHouses(logger) ]).then(() => {
+            this.setState({
+                loading: false
             });
-        })
+        });
         logger.info(new Date() + ": Search Page started by WorkerId: " + this.context.workerId);
     }
 
     async getScenario(logger) {
         const PROXY_URL = `https://infinite-plateau-04823.herokuapp.com/`;
-        const URL = PROXY_URL + `https://cryptic-headland-35693.herokuapp.com/getScenarioAndHouse?sid=${this.state.scenarioId}`;
+        const URL = PROXY_URL + `https://cryptic-headland-35693.herokuapp.com/getScenarioAndHouse?sid=${this.props.scenarioIds[this.state.scenarioIndex]}`;
         let response;
         try {
             response = await fetch(URL, {method: "GET",
@@ -74,7 +66,7 @@ class SearchPage extends React.Component {
             scenario: response.description,
             correctHouse: response.correctHouse["_id"]
         });
-        logger.info(new Date() + ": Scenario id #" + this.state.scenarioId + " given to WorkerId: " + this.context.workerId);
+        logger.info(new Date() + ": Scenario id #" + this.props.scenarioIds[this.state.scenarioIndex] + " given to WorkerId: " + this.context.workerId);
     }
 
     async getAllHouses(logger) {
@@ -115,9 +107,9 @@ class SearchPage extends React.Component {
     handleActionLogging = (logger) => {
         logger.info(new Date() + " Summary of actions by WorkerID: " + this.context.workerId);
         for (const [key, value] of Object.entries(this.state.actions)) {
-            console.log(`${key}:  ${value}`)
             logger.info(new Date() + "WorkerID: " + this.context.workerId + `${key}:  ${value}`);
         }
+        logger.info(new Date() + "End Summary of actions by WorkerID: " + this.context.workerId);
         this.setState({ submitted: true })
     }
 
@@ -145,34 +137,38 @@ class SearchPage extends React.Component {
             logger.info(new Date() + ": DSS option submitted by WorkerId: " + this.context.workerId);
             this.setState({actions: {...this.state.actions, dss_house_submitted: true}}, () => this.handleActionLogging(logger));
         } else {
-            logger.info(new Date() + ": House Id " + housingOption["_id"]  + " manually submitted by WorkerId: " + this.context.workerId);
-            this.setState({actions: {...this.state.actions, manual_house_submitted: true}}, () => this.handleActionLogging(logger));
-            if(housingOption["_id"] === this.state.correctHouse) {
-                logger.info(new Date() + ": Correct house submitted by WorkerId: " + this.context.workerId);
-                this.setState({ feedback: true });
-            }
-            else {
-                logger.info(new Date() + ": Incorrect house submitted by WorkerId: " + this.context.workerId);
-                this.setState({ feedback: false });
-            }
+            logger.info(new Date() + ": House Id " + housingOption["_id"] + " manually submitted by WorkerId: " + this.context.workerId);
+            this.setState({
+                actions: {
+                    ...this.state.actions,
+                    manual_house_submitted: true
+                }
+            }, () => this.handleActionLogging(logger));
+        }
+        if(housingOption["_id"] === this.state.correctHouse) {
+            logger.info(new Date() + ": Correct house submitted by WorkerId: " + this.context.workerId);
+            this.setState({ feedback: true });
+        }
+        else {
+            logger.info(new Date() + ": Incorrect house submitted by WorkerId: " + this.context.workerId);
+            this.setState({ feedback: false });
         }
     }
 
     updateScenarioId = () => {
         this.setState({
-            loading: true,
             dss: false,
-            finished: true,
-            scenarioId: this.state.scenarioIdArray[1],
+            loading: true,
+            finished: this.state.scenarioIndex === 1 ? true : false,
+            scenarioIndex: this.state.scenarioIndex + 1,
             submitted: false,
             actions: {
-            dss_selected: false,
+                dss_selected: false,
                 dss_house_details_checked: false,
                 manual_house_details_checked: false,
                 dss_house_submitted: false,
                 manual_house_submitted: false
-
-        }
+            }
         }, () => {
             Promise.all([this.getScenario(this.props.logger), this.getAllHouses(this.props.logger)]).then(() => {
                 this.setState({
