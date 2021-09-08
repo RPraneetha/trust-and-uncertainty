@@ -62,7 +62,6 @@ class App extends React.Component {
         catch(e) {
             this.state.logger.error(new Date() + ": Error " + JSON.stringify(e));
         }
-        // response = response ? response : scenarioId;
         this.setState({
             scenarioIds: scenarioId
         });
