@@ -43,10 +43,7 @@ class App extends React.Component {
     }
 
     async getScenarioIds() {
-        let scenarioId = {
-            "complexScenario": 2,
-            "easyScenario": 5
-        }
+        let scenarioId = [1, 2, 3];
         const PROXY_URL = `https://infinite-plateau-04823.herokuapp.com/`;
         const URL = PROXY_URL + `https://cryptic-headland-35693.herokuapp.com/getWorkerScenario?wid=${this.context.workerId}`;
         let response;
@@ -65,13 +62,11 @@ class App extends React.Component {
         catch(e) {
             this.state.logger.error(new Date() + ": Error " + JSON.stringify(e));
         }
-        response = response ? response : scenarioId;
         this.setState({
-            scenarioIds: response,
-            scenarioIdArray: [ response.complexScenario, response.easyScenario ]
+            scenarioIds: scenarioId
         });
-        this.state.logger.info(new Date() + ": Scenarios: Complex id #" + this.state.scenarioIds.complexScenario +
-            " Simple id #" + this.state.scenarioIds.easyScenario + " given to WorkerId: " + this.context.workerId);
+        this.state.logger.info(new Date() + ": Scenarios: #" + this.state.scenarioIds[0] + "#" +
+            this.state.scenarioIds[1] +"#" + this.state.scenarioIds[2] + " given to WorkerId: " + this.context.workerId);
     }
 
     render() {
@@ -85,7 +80,8 @@ class App extends React.Component {
                             this.state.error ?
                                 <ErrorPage />
                                 :
-                                <SearchPage logger={window.myLogger} scenarioIds={this.state.scenarioIds} scenarioIdArray={this.state.scenarioIdArray} />
+                                <SearchPage logger={window.myLogger} scenarioIds={this.state.scenarioIds} />
+
                         }
                     </div>
                 </div>
